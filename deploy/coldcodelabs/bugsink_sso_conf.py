@@ -16,7 +16,10 @@ _sso_mw = "bugsink_sso.ForwardedIdentityMiddleware"
 if _sso_mw not in MIDDLEWARE:
     MIDDLEWARE.insert(MIDDLEWARE.index(_auth_mw) + 1, _sso_mw)
 
-# Backend de SSO na frente do ModelBackend (que segue valendo p/ break-glass local).
-AUTHENTICATION_BACKENDS = ["bugsink_sso.FleetSSOBackend"] + [
-    b for b in list(AUTHENTICATION_BACKENDS) if b != "bugsink_sso.FleetSSOBackend"  # noqa: F405
+# Backend de SSO na frente do ModelBackend (que segue valendo p/ break-glass
+# local). O Bugsink não define AUTHENTICATION_BACKENDS (usa o default implícito do
+# Django), então declaramos explícito: SSO + o ModelBackend padrão.
+AUTHENTICATION_BACKENDS = [
+    "bugsink_sso.FleetSSOBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
